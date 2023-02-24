@@ -8,9 +8,17 @@
 
     <ImageView
         android:id="@+id/iV"
-        android:layout_width="125dp"
-        android:layout_height="130dp"
-        app:srcCompat="@drawable/stand"
-        tools:layout_editor_absoluteX="25dp"
-        tools:layout_editor_absoluteY="253dp" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/salto_scaled_16x_minified"
+        tools:layout_editor_absoluteX="45dp"
+        tools:layout_editor_absoluteY="50dp" />
+
+    <Button
+        android:id="@+id/btPixel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        tools:layout_editor_absoluteX="195dp"
+        tools:layout_editor_absoluteY="538dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
