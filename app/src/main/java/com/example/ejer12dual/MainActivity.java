@@ -2,6 +2,7 @@ package com.example.ejer12dual;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -13,8 +14,17 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.gif.GifBitmapProvider;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.load.resource.gif.GifDrawableResource;
+import com.google.android.youtube.player.YouTubeApiServiceUtil;
+import com.google.android.youtube.player.YouTubePlayer;
+import com.google.android.youtube.player.YouTubePlayerView;
+import com.google.android.youtube.player.YouTubeStandalonePlayer;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,21 +32,25 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        MediaPlayer mp = new MediaPlayer();
-        mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
-        try {
-            mp.setDataSource("https://www.youtube.com/watch?v=bcUaeVQYJC4");
-
-        } catch (IOException e) {}
-
         ImageView iV = findViewById(R.id.iV);
         Drawable teleGif = getDrawable(R.drawable.quieto);
         Drawable teleRun = getDrawable(R.drawable.corriendo);
         Button btPixel = findViewById(R.id.btPixel);
         teleGif.setFilterBitmap(false);
         Glide.with(this).load(teleGif).into(iV);
+
+        SQLiteDatabase sqLiteDatabase;
+
+       // sqLiteDatabase.execSQL
+
+        MediaPlayer mp = new MediaPlayer();
+
+        try {mp.setDataSource("");} catch (IOException e) {}
+
+
+
+
+
 
         btPixel.setOnClickListener(v -> {
 
