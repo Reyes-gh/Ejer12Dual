@@ -8,17 +8,38 @@
 
     <ImageView
         android:id="@+id/iV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="75dp"
+        android:layout_height="76dp"
         app:srcCompat="@drawable/salto_scaled_16x_minified"
-        tools:layout_editor_absoluteX="45dp"
-        tools:layout_editor_absoluteY="50dp" />
+        tools:layout_editor_absoluteX="168dp"
+        tools:layout_editor_absoluteY="16dp" />
 
     <Button
         android:id="@+id/btPixel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
-        tools:layout_editor_absoluteX="195dp"
-        tools:layout_editor_absoluteY="538dp" />
+        android:layout_marginBottom="244dp"
+        android:text="Play"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/nombreSong"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Song..."
+        tools:layout_editor_absoluteX="184dp"
+        tools:layout_editor_absoluteY="405dp" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@android:drawable/stat_sys_headset"
+        tools:layout_editor_absoluteX="196dp"
+        tools:layout_editor_absoluteY="258dp" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
