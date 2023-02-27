@@ -84,7 +84,8 @@ public class SQLiteManager extends SQLiteOpenHelper {
 
     public void borrarSongs () {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
-        sqLiteDatabase.rawQuery("DELETE FROM " + TABLE_NAME, null);
+        sqLiteDatabase.execSQL("DELETE FROM " + TABLE_NAME);
+
     }
 
     public ArrayList<Song> getSongs(){

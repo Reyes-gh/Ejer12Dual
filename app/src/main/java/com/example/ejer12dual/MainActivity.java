@@ -25,33 +25,19 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    TextView test;
     ImageView iV;
-
     ListView lv;
-
     SQLiteManager sqLiteManager;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        lv = findViewById(R.id.songList);
-        updateList();
-
-        lv.setOnItemClickListener((adapterView, view, i, l) -> {
-
-            String s = lv.getItemAtPosition(i).toString();
-
-            Song newSong = (Song) lv.getItemAtPosition(i);
-            test.setText(newSong.toString());
-
-        });
-
         sqLiteManager = new SQLiteManager(this);
+        lv = findViewById(R.id.songList);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        test = findViewById(R.id.test);
         iV = findViewById(R.id.iV);
 
         Drawable teleGif = getDrawable(R.drawable.quieto);
@@ -59,11 +45,6 @@ public class MainActivity extends AppCompatActivity {
         teleGif.setFilterBitmap(false);
         Glide.with(this).load(teleGif).into(iV);
 
-
-
-        SQLiteDatabase sqLiteDatabase;
-
-       // sqLiteDatabase.execSQL
 
         MediaPlayer mp = new MediaPlayer();
 //        btPixel.setOnClickListener(v -> {
@@ -80,6 +61,15 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //
 //        });
+
+
+        updateList();
+
+        lv.setOnItemClickListener((adapterView, view, i, l) -> {
+
+            Song newSong = (Song) lv.getItemAtPosition(i);
+
+        });
     }
 
     public void newSong(View view) {
@@ -118,8 +108,6 @@ public class MainActivity extends AppCompatActivity {
                     InputStream inputStream = getContentResolver().openInputStream(audioUri);
                     inputStream.read(bytes);
 
-                test.setText(audioUri.getPath());
-
                     songPaLista(nombre, bytes);
 
                 }
@@ -135,11 +123,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void songPaLista(String file, byte[] bytes) throws IOException {
 
-        Song s1 = new Song(1, file, bytes);
+        ArrayList<Song> arraySongs = sqLiteManager.getSongs();
+
+        Song s1 = new Song(arraySongs.toArray().length+1, file, bytes);
 
         sqLiteManager.addSong(s1);
+        arraySongs = sqLiteManager.getSongs();
 
-        ArrayList<Song> arraySongs = sqLiteManager.getSongs();
 
         ArrayAdapter<Song> arrayAdapter = new ArrayAdapter<>(
                 this,
@@ -152,11 +142,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void borrarSongs(View view) {
         sqLiteManager.borrarSongs();
+        updateList();
     }
 
     public void updateList(){
         ArrayList<Song> arraySongs = sqLiteManager.getSongs();
-
         ArrayAdapter<Song> arrayAdapter = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_list_item_1,
@@ -166,6 +156,11 @@ public class MainActivity extends AppCompatActivity {
         lv.setAdapter(arrayAdapter);
     }
 
+    public void abrirPlayer(Song song) {
+
+
+
+    }
 
 }
 
