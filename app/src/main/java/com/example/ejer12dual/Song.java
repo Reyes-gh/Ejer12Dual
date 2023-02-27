@@ -1,6 +1,7 @@
 package com.example.ejer12dual;
 
 import java.sql.Blob;
+import java.util.Arrays;
 
 public class Song {
 
@@ -15,6 +16,10 @@ public class Song {
         this.song = song;
     }
 
+    @Override
+    public String toString() {
+        return nombre;
+    }
 
     public int getId() {
         return id;

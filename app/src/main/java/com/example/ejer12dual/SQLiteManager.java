@@ -2,10 +2,15 @@ package com.example.ejer12dual;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
+
+import java.sql.Blob;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SQLiteManager extends SQLiteOpenHelper {
 
@@ -36,11 +41,11 @@ public class SQLiteManager extends SQLiteOpenHelper {
 
         StringBuilder sql;
         sql = new StringBuilder()
-                .append("CREATE TABLE")
+                .append("CREATE TABLE ")
                 .append(TABLE_NAME)
                 .append("(")
                 .append(COUNTER)
-                .append("INTEGER PRIMARY KEY AUTOINCREMENT, ")
+                .append(" INTEGER PRIMARY KEY AUTOINCREMENT, ")
                 .append(ID_FIELD)
                 .append(" INT, ")
                 .append(NOMBRE_FIELD)
@@ -76,4 +81,48 @@ public class SQLiteManager extends SQLiteOpenHelper {
         sqLiteDatabase.insert(TABLE_NAME, null, cv);
 
     }
+
+    public void borrarSongs () {
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        sqLiteDatabase.rawQuery("DELETE FROM " + TABLE_NAME, null);
+    }
+
+    public ArrayList<Song> getSongs(){
+
+        ArrayList<Song> arraySongs = new ArrayList<>();
+
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+
+        try (Cursor result = sqLiteDatabase.rawQuery("SELECT * FROM " + TABLE_NAME, null)) {
+
+            if (result.getCount()!=0) {
+
+                while (result.moveToNext()) {
+                    int id = result.getInt(1);
+                    String name = result.getString(2);
+                    byte[] song = result.getBlob(3);
+
+                    Song newSong = new Song(id, name, song);
+                    arraySongs.add(newSong);
+                }
+
+            }
+
+        }
+
+        return arraySongs;
+    }
+
+    public void updateSong(Song s) {
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(ID_FIELD, s.getId());
+        cv.put(NOMBRE_FIELD, s.getNombre());
+        cv.put(MP3_FIELD, s.getSong());
+
+        sqLiteDatabase.update(TABLE_NAME, cv, ID_FIELD + " =? ", new String[]{String.valueOf(s.getId())});
+
+    }
+
 }
