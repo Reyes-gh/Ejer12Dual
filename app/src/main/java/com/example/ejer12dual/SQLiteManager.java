@@ -3,11 +3,13 @@ package com.example.ejer12dual;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.CursorWindow;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
+import java.lang.reflect.Field;
 import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,12 +90,15 @@ public class SQLiteManager extends SQLiteOpenHelper {
 
     }
 
-    public ArrayList<Song> getSongs(){
+    public ArrayList<Song> getSongs() throws IllegalAccessException, NoSuchFieldException {
 
         ArrayList<Song> arraySongs = new ArrayList<>();
 
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
 
+        Field field = CursorWindow.class.getDeclaredField("sCursorWindowSize");
+        field.setAccessible(true);
+        field.set(null, 100 * 1024 * 1024);
         try (Cursor result = sqLiteDatabase.rawQuery("SELECT * FROM " + TABLE_NAME, null)) {
 
             if (result.getCount()!=0) {
