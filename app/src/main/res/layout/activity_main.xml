@@ -89,9 +89,9 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="center_horizontal"
-            android:backgroundTint="@color/blueish"
+            android:backgroundTint="#006699FF"
             android:onClick="playMedia"
-            app:srcCompat="@android:drawable/ic_media_play"/>
+            app:srcCompat="@android:drawable/ic_media_play" />
 
     </LinearLayout>
 

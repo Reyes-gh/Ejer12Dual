@@ -1,10 +1,15 @@
 package com.example.ejer12dual;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.AudioFormat;
 import android.media.AudioManager;
@@ -51,22 +56,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         iV = findViewById(R.id.iV);
 
-        Drawable teleGif = getDrawable(R.drawable.quieto);
-        Drawable teleRun = getDrawable(R.drawable.corriendo);
+        @SuppressLint("UseCompatLoadingForDrawables") Drawable teleGif = getDrawable(R.drawable.quieto);
+        @SuppressLint("UseCompatLoadingForDrawables") Drawable teleRun = getDrawable(R.drawable.corriendo);
 
         teleGif.setFilterBitmap(false);
         Glide.with(this).load(teleGif).into(iV);
 
         try {
             updateList();
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
 
-        songName = (TextView) findViewById(R.id.songName);
-        btnPlay = (ImageButton) findViewById(R.id.btnPlay);
+        songName = findViewById(R.id.songName);
+        btnPlay = findViewById(R.id.btnPlay);
         iV.setVisibility(View.INVISIBLE);
         songName.setVisibility(View.INVISIBLE);
         btnPlay.setVisibility(View.INVISIBLE);
@@ -79,19 +82,32 @@ public class MainActivity extends AppCompatActivity {
             abrirPlayer(newSong);
 
         });
+        @SuppressLint("UseCompatLoadingForDrawables") Drawable playBtn = getDrawable(R.drawable.btn_play);
+        Bitmap playBM = ((BitmapDrawable)playBtn).getBitmap();
+        @SuppressLint("UseCompatLoadingForDrawables") Drawable pauseBtn = getDrawable(R.drawable.btn_pause);
+        Bitmap pauseBM = ((BitmapDrawable) pauseBtn).getBitmap();
+
+
+        Drawable drawablePlay = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(playBM, 50, 50, true));
+        Drawable drawablePause = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(pauseBM, 50, 50, true));
+
+        drawablePlay.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
+        drawablePause.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
+
+        btnPlay.setImageDrawable(drawablePlay);
 
         btnPlay.setOnClickListener(v -> {
 
-            if (iV.getDrawable()==teleGif) {
+            if (mp.isPlaying()) {
+                mp.pause();
+                btnPlay.setImageDrawable(drawablePlay);
 
+                Glide.with(this).load(teleGif).into(iV);
+            }
+             else {
                 Glide.with(this).load(teleRun).into(iV);
                 mp.start();
-            } else {
-                Glide.with(this).load(teleGif).into(iV);
-                if (mp.isPlaying()) {
-                    mp.pause();
-
-                }
+                btnPlay.setImageDrawable(drawablePause);
             }
 
         }
@@ -121,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
             if(resultCode == RESULT_OK){
                 Uri audioUri = data.getData();
 
-                Cursor returnCursor =
+                @SuppressLint("Recycle") Cursor returnCursor =
                         getContentResolver().query(audioUri, null, null, null, null);
 
                 int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
@@ -143,13 +159,9 @@ public class MainActivity extends AppCompatActivity {
                 }
 
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
         super.onActivityResult(requestCode, resultCode, data);
