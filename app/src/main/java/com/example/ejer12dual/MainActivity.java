@@ -1,20 +1,15 @@
 package com.example.ejer12dual;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.res.AssetFileDescriptor;
-import android.content.res.Resources;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.AudioFormat;
-import android.media.AudioManager;
-import android.media.AudioTrack;
-import android.media.Image;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -31,9 +26,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,7 +38,11 @@ public class MainActivity extends AppCompatActivity {
     SQLiteManager sqLiteManager;
     TextView songName;
     ImageButton btnPlay;
+    ImageButton btnStop;
     MediaPlayer mp;
+    Song newSong;
+    Drawable drawablePlay;
+    Drawable teleGif;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,19 +53,24 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         iV = findViewById(R.id.iV);
 
-        @SuppressLint("UseCompatLoadingForDrawables") Drawable teleGif = getDrawable(R.drawable.quieto);
+        teleGif = getDrawable(R.drawable.quieto);
         @SuppressLint("UseCompatLoadingForDrawables") Drawable teleRun = getDrawable(R.drawable.corriendo);
 
         @SuppressLint("UseCompatLoadingForDrawables") Drawable playBtn = getDrawable(R.drawable.btn_play);
         Bitmap playBM = ((BitmapDrawable)playBtn).getBitmap();
         @SuppressLint("UseCompatLoadingForDrawables") Drawable pauseBtn = getDrawable(R.drawable.btn_pause);
         Bitmap pauseBM = ((BitmapDrawable) pauseBtn).getBitmap();
+        @SuppressLint("UseCompatLoadingForDrawables") Drawable stopBtn = getDrawable(R.drawable.btn_stop);
+        Bitmap stopBM = ((BitmapDrawable) stopBtn).getBitmap();
 
-        Drawable drawablePlay = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(playBM, 50, 50, true));
-        Drawable drawablePause = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(pauseBM, 50, 50, true));
+        drawablePlay = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(playBM, 100, 100, true));
+        Drawable drawablePause = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(pauseBM, 100, 100, true));
+        Drawable drawableStop = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(stopBM, 70, 70, true));
 
         drawablePlay.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
         drawablePause.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
+        drawableStop.setColorFilter(Color.parseColor("#B90E0A"), PorterDuff.Mode.SRC_ATOP);
+
 
         teleGif.setFilterBitmap(false);
         Glide.with(this).load(teleGif).into(iV);
@@ -81,23 +83,38 @@ public class MainActivity extends AppCompatActivity {
 
         songName = findViewById(R.id.songName);
         btnPlay = findViewById(R.id.btnPlay);
+        btnStop = findViewById(R.id.btnStop);
+        btnStop.setVisibility(View.INVISIBLE);
         iV.setVisibility(View.INVISIBLE);
         songName.setVisibility(View.INVISIBLE);
         btnPlay.setVisibility(View.INVISIBLE);
+        AnimatorSet animadorBoton = new AnimatorSet();
 
         lv.setOnItemClickListener((adapterView, view, i, l) -> {
 
+            btnStop.setVisibility(View.INVISIBLE);
+           ObjectAnimator trasladar = ObjectAnimator.ofFloat(songName, "translationX", -800f, 0f);
+
+            trasladar.setDuration(1500);
+            animadorBoton.play(trasladar);
+            animadorBoton.start();
+
+
             btnPlay.setImageDrawable(drawablePlay);
+            btnStop.setImageDrawable(drawableStop);
             Glide.with(this).load(teleGif).into(iV);
-            Song newSong = (Song) lv.getItemAtPosition(i);
+            newSong = (Song) lv.getItemAtPosition(i);
             songName.setText(newSong.getNombre());
             abrirPlayer(newSong);
 
         });
 
-
-
-
+        btnStop.setOnClickListener(v -> {
+            try {
+                stopSong(newSong);
+            } catch (IOException e) {
+            }
+        });
 
         btnPlay.setImageDrawable(drawablePlay);
 
@@ -112,10 +129,13 @@ public class MainActivity extends AppCompatActivity {
              else {
                 Glide.with(this).load(teleRun).into(iV);
                 mp.start();
+                btnStop.setVisibility(View.VISIBLE);
                 btnPlay.setImageDrawable(drawablePause);
             }
 
         }
+
+
 
         );
     }
@@ -129,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent;
         intent = new Intent();
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        intent.setType("audio/mpeg");
+        intent.setType("audio/*");
 
         startActivityForResult(intent, 230);
     }
@@ -156,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
                 byte[] bytes = new byte[size];
                 System.out.println(mp3File.length() + "sies");
 
-                    InputStream inputStream = getContentResolver().openInputStream(audioUri);
+                    @SuppressLint("Recycle") InputStream inputStream = getContentResolver().openInputStream(audioUri);
                     inputStream.read(bytes);
 
                     songPaLista(nombre, bytes);
@@ -227,12 +247,30 @@ public class MainActivity extends AppCompatActivity {
             mp.setDataSource(fis.getFD());
 
             mp.prepare();
+
         } catch (IOException ex) {
-            String s = ex.toString();
             ex.printStackTrace();
         }
+    }
 
+    public void stopSong(Song song) throws IOException {
+        mp.stop();
+        File tempMp3 = File.createTempFile("kurchina", "mp3", getCacheDir());
+        tempMp3.deleteOnExit();
+        FileOutputStream fos = new FileOutputStream(tempMp3);
+        fos.write(song.getSong());
+        fos.close();
 
+        btnPlay.setImageDrawable(drawablePlay);
+
+        Glide.with(this).load(teleGif).into(iV);
+
+        mp.reset();
+
+        FileInputStream fis = new FileInputStream(tempMp3);
+        mp.setDataSource(fis.getFD());
+
+        mp.prepare();
     }
 
 }

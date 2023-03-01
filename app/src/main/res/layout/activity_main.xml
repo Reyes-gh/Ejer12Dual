@@ -26,7 +26,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Alextify"
+            android:text="@string/appname"
             android:textSize="35sp"
             android:textColor="@color/white"
             android:layout_gravity="center">
@@ -35,7 +35,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="+"
+            android:text="@string/mas"
             android:backgroundTint="@color/black"
             android:textSize="30sp"
             android:layout_gravity="end"
@@ -49,7 +49,9 @@
         android:layout_height="190sp"
         android:background="#FFFFFF"
         android:backgroundTint="#FFFFFF"
-        android:foregroundTint="#FFFFFF"></ListView>
+        android:foregroundTint="#FFFFFF">
+
+    </ListView>
 
     <Button
         android:layout_width="match_parent"
@@ -70,28 +72,53 @@
 
     <LinearLayout
 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/songName"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="5dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
             android:layout_gravity="center_horizontal"
+            android:gravity="center"
             android:text="😎Sample text😎"
             android:textSize="20dp"
             android:textColor="#FFFFFF"/>
 
-        <ImageButton
-            android:id="@+id/btnPlay"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center_horizontal"
-            android:backgroundTint="#006699FF"
-            android:onClick="playMedia"
-            app:srcCompat="@android:drawable/ic_media_play" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btnPlay"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"
+                android:layout_marginBottom="20dp"
+                android:layout_marginLeft="49pt"
+                android:layout_weight="0.1"
+                android:backgroundTint="#006699FF"
+                android:onClick="playMedia"
+                app:srcCompat="@drawable/btn_play" />
+
+            <ImageButton
+                android:id="@+id/btnStop"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="end"
+                android:layout_marginBottom="20dp"
+                android:backgroundTint="#006699FF"
+                android:onClick="stopSong"
+                app:srcCompat="@drawable/btn_stop" />
+        </LinearLayout>
+
 
     </LinearLayout>
 
