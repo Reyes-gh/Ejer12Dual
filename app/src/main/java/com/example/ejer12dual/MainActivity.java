@@ -59,6 +59,17 @@ public class MainActivity extends AppCompatActivity {
         @SuppressLint("UseCompatLoadingForDrawables") Drawable teleGif = getDrawable(R.drawable.quieto);
         @SuppressLint("UseCompatLoadingForDrawables") Drawable teleRun = getDrawable(R.drawable.corriendo);
 
+        @SuppressLint("UseCompatLoadingForDrawables") Drawable playBtn = getDrawable(R.drawable.btn_play);
+        Bitmap playBM = ((BitmapDrawable)playBtn).getBitmap();
+        @SuppressLint("UseCompatLoadingForDrawables") Drawable pauseBtn = getDrawable(R.drawable.btn_pause);
+        Bitmap pauseBM = ((BitmapDrawable) pauseBtn).getBitmap();
+
+        Drawable drawablePlay = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(playBM, 50, 50, true));
+        Drawable drawablePause = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(pauseBM, 50, 50, true));
+
+        drawablePlay.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
+        drawablePause.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
+
         teleGif.setFilterBitmap(false);
         Glide.with(this).load(teleGif).into(iV);
 
@@ -76,23 +87,17 @@ public class MainActivity extends AppCompatActivity {
 
         lv.setOnItemClickListener((adapterView, view, i, l) -> {
 
+            btnPlay.setImageDrawable(drawablePlay);
             Glide.with(this).load(teleGif).into(iV);
             Song newSong = (Song) lv.getItemAtPosition(i);
             songName.setText(newSong.getNombre());
             abrirPlayer(newSong);
 
         });
-        @SuppressLint("UseCompatLoadingForDrawables") Drawable playBtn = getDrawable(R.drawable.btn_play);
-        Bitmap playBM = ((BitmapDrawable)playBtn).getBitmap();
-        @SuppressLint("UseCompatLoadingForDrawables") Drawable pauseBtn = getDrawable(R.drawable.btn_pause);
-        Bitmap pauseBM = ((BitmapDrawable) pauseBtn).getBitmap();
 
 
-        Drawable drawablePlay = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(playBM, 50, 50, true));
-        Drawable drawablePause = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(pauseBM, 50, 50, true));
 
-        drawablePlay.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
-        drawablePause.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
+
 
         btnPlay.setImageDrawable(drawablePlay);
 
