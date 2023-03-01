@@ -128,6 +128,13 @@ public class SQLiteManager extends SQLiteOpenHelper {
         cv.put(MP3_FIELD, s.getSong());
 
         sqLiteDatabase.update(TABLE_NAME, cv, ID_FIELD + " =? ", new String[]{String.valueOf(s.getId())});
+    }
+
+    public void borrarCancion(Song s) {
+
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        sqLiteDatabase.execSQL("DELETE FROM " + TABLE_NAME + " WHERE " + NOMBRE_FIELD + "='" + s.getNombre() + "'");
+
 
     }
 

@@ -6,6 +6,10 @@ android {
     namespace 'com.example.ejer12dual'
     compileSdk 33
 
+    aaptOptions {
+        noCompress 'flac'
+    }
+
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
     }

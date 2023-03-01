@@ -3,22 +3,24 @@ package com.example.ejer12dual;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.OpenableColumns;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -41,36 +43,35 @@ public class MainActivity extends AppCompatActivity {
     ImageButton btnStop;
     MediaPlayer mp;
     Song newSong;
-    Drawable drawablePlay;
     Drawable teleGif;
+    Drawable drawablePlay;
+    Drawable drawableDelete;
+    Drawable drawablePause;
+    ImageButton btnDelete;
+    SeekBar seekBar;
+    Runnable runSB;
+    Handler handlerSB;
+    TextView currentDur;
+    TextView totalDur;
+    AnimatorSet animadorBoton;
+    AnimatorSet animadorBoton2;
+    AnimatorSet animadorBoton3;
+    int casetteIsOn = 0;
+    @SuppressLint({"UseCompatLoadingForDrawables", "SetTextI18n"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         sqLiteManager = new SQLiteManager(this);
         lv = findViewById(R.id.songList);
         mp = new MediaPlayer();
+        handlerSB = new Handler();
 
         setContentView(R.layout.activity_main);
         iV = findViewById(R.id.iV);
 
         teleGif = getDrawable(R.drawable.quieto);
         @SuppressLint("UseCompatLoadingForDrawables") Drawable teleRun = getDrawable(R.drawable.corriendo);
-
-        @SuppressLint("UseCompatLoadingForDrawables") Drawable playBtn = getDrawable(R.drawable.btn_play);
-        Bitmap playBM = ((BitmapDrawable)playBtn).getBitmap();
-        @SuppressLint("UseCompatLoadingForDrawables") Drawable pauseBtn = getDrawable(R.drawable.btn_pause);
-        Bitmap pauseBM = ((BitmapDrawable) pauseBtn).getBitmap();
-        @SuppressLint("UseCompatLoadingForDrawables") Drawable stopBtn = getDrawable(R.drawable.btn_stop);
-        Bitmap stopBM = ((BitmapDrawable) stopBtn).getBitmap();
-
-        drawablePlay = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(playBM, 100, 100, true));
-        Drawable drawablePause = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(pauseBM, 100, 100, true));
-        Drawable drawableStop = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(stopBM, 70, 70, true));
-
-        drawablePlay.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
-        drawablePause.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
-        drawableStop.setColorFilter(Color.parseColor("#B90E0A"), PorterDuff.Mode.SRC_ATOP);
-
 
         teleGif.setFilterBitmap(false);
         Glide.with(this).load(teleGif).into(iV);
@@ -81,42 +82,99 @@ public class MainActivity extends AppCompatActivity {
             throw new RuntimeException(e);
         }
 
+        currentDur = findViewById(R.id.currentDur);
+        seekBar = findViewById(R.id.seekBar);
+        totalDur = findViewById(R.id.totalDur);
         songName = findViewById(R.id.songName);
         btnPlay = findViewById(R.id.btnPlay);
         btnStop = findViewById(R.id.btnStop);
-        btnStop.setVisibility(View.INVISIBLE);
-        iV.setVisibility(View.INVISIBLE);
-        songName.setVisibility(View.INVISIBLE);
-        btnPlay.setVisibility(View.INVISIBLE);
-        AnimatorSet animadorBoton = new AnimatorSet();
+        btnDelete = findViewById(R.id.btnDelete);
+        disappear();
+        animadorBoton = new AnimatorSet();
+        animadorBoton2 = new AnimatorSet();
+        animadorBoton3 = new AnimatorSet();
+
 
         lv.setOnItemClickListener((adapterView, view, i, l) -> {
+            if ((casetteIsOn==0)) {
+                animIntro();
+            }
 
-            btnStop.setVisibility(View.INVISIBLE);
-           ObjectAnimator trasladar = ObjectAnimator.ofFloat(songName, "translationX", -800f, 0f);
-
-            trasladar.setDuration(1500);
-            animadorBoton.play(trasladar);
-            animadorBoton.start();
-
+            drawablePlay = getDrawable(R.drawable.newplay);
+            Drawable drawableStop = getDrawable(R.drawable.stopnotpressed);
+            drawableDelete = getDrawable(R.drawable.trashnotpressed);
+            drawablePause = getDrawable(R.drawable.newpause);
 
             btnPlay.setImageDrawable(drawablePlay);
             btnStop.setImageDrawable(drawableStop);
+            btnDelete.setImageDrawable(drawableDelete);
             Glide.with(this).load(teleGif).into(iV);
             newSong = (Song) lv.getItemAtPosition(i);
-            songName.setText(newSong.getNombre());
+
+            StringBuilder sb = new StringBuilder(newSong.getNombre());
+
+            if (sb.charAt(sb.length()-1)=='c') {sb.setLength(sb.length()-5);} else { sb.setLength(sb.length()-4);}
+
+            songName.setText(sb);
             abrirPlayer(newSong);
 
         });
 
         btnStop.setOnClickListener(v -> {
             try {
+                btnStop.setImageDrawable(getDrawable(R.drawable.stoppressed));
                 stopSong(newSong);
-            } catch (IOException e) {
+            } catch (IOException ignored) {
             }
         });
 
-        btnPlay.setImageDrawable(drawablePlay);
+        btnDelete.setOnClickListener(v -> {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+            final AlertDialog dialog = builder.setNegativeButton("OK", (dialog1, id) -> {
+                try {
+                    borrarSong(newSong);
+                } catch (NoSuchFieldException | IOException | IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+                dialog1.cancel();
+            }).setPositiveButton("CANCEL", (dialog12, id) -> dialog12.cancel()).create();
+
+            TextView myMsg = new TextView(MainActivity.this);
+            myMsg.setText("Es un temazo, ¿la vas a borrar de verdad?");
+            myMsg.setTextSize(15);
+            myMsg.setGravity(Gravity.CENTER_HORIZONTAL);
+            dialog.setView(myMsg);
+
+            dialog.setTitle("¿Borrar canción?");
+
+            dialog.setOnShowListener(arg0 -> {
+                Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+                negativeButton.setTextColor(0xff00ffff);
+                Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                positiveButton.setTextColor(0xff00ffff);
+            });
+            dialog.show();
+        });
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    mp.seekTo(progress);
+                    seekBar.setProgress(progress);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
 
         btnPlay.setOnClickListener(v -> {
 
@@ -129,13 +187,13 @@ public class MainActivity extends AppCompatActivity {
              else {
                 Glide.with(this).load(teleRun).into(iV);
                 mp.start();
+                btnStop.setImageDrawable(getDrawable(R.drawable.stopnotpressed));
+                liveSeekBar();
                 btnStop.setVisibility(View.VISIBLE);
                 btnPlay.setImageDrawable(drawablePause);
             }
 
         }
-
-
 
         );
     }
@@ -212,8 +270,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void borrarSongs(View view) throws NoSuchFieldException, IllegalAccessException {
-        sqLiteManager.borrarSongs();
-        updateList();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+        final AlertDialog dialog = builder.setNegativeButton("OK", (dialog1, id) -> {
+            try {
+                sqLiteManager.borrarSongs();
+                animOutro();
+                updateList();
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+            dialog1.cancel();
+        }).setPositiveButton("CANCEL", (dialog12, id) -> dialog12.cancel()).create();
+
+        TextView myMsg = new TextView(MainActivity.this);
+        myMsg.setText("Woah woah espera ¿en serio quieres borrarlo TODO?");
+        myMsg.setTextSize(15);
+        myMsg.setGravity(Gravity.CENTER_HORIZONTAL);
+        dialog.setView(myMsg);
+
+        dialog.setTitle("¿Borrar TODO?");
+
+        dialog.setOnShowListener(arg0 -> {
+            Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+            negativeButton.setTextColor(0xff00ffff);
+            Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            positiveButton.setTextColor(0xff00ffff);
+        });
+        dialog.show();
+
     }
 
     public void updateList() throws NoSuchFieldException, IllegalAccessException {
@@ -230,8 +316,13 @@ public class MainActivity extends AppCompatActivity {
     public void abrirPlayer(Song song) {
 
         iV.setVisibility(View.VISIBLE);
+        btnDelete.setVisibility(View.VISIBLE);
+        btnStop.setVisibility(View.VISIBLE);
         btnPlay.setVisibility(View.VISIBLE);
         songName.setVisibility(View.VISIBLE);
+        seekBar.setVisibility(View.VISIBLE);
+        currentDur.setVisibility(View.VISIBLE);
+        totalDur.setVisibility(View.VISIBLE);
 
         try {
 
@@ -247,6 +338,8 @@ public class MainActivity extends AppCompatActivity {
             mp.setDataSource(fis.getFD());
 
             mp.prepare();
+            seekBar.setMax(mp.getDuration());
+            totalDur.setText(getTimeString(mp.getDuration()));
 
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -271,6 +364,108 @@ public class MainActivity extends AppCompatActivity {
         mp.setDataSource(fis.getFD());
 
         mp.prepare();
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    public void borrarSong(Song s) throws NoSuchFieldException, IllegalAccessException, IOException {
+
+        btnDelete.setImageDrawable(getDrawable(R.drawable.trashpressed));
+        sqLiteManager.borrarCancion(s);
+        animOutro();
+        updateList();
+    }
+
+    public void liveSeekBar() {
+        int currPos = mp.getCurrentPosition();
+        currentDur.setText(getTimeString(mp.getCurrentPosition()));
+
+        seekBar.setProgress(currPos);
+
+        runSB = this::liveSeekBar;
+        handlerSB.postDelayed(runSB, 1000);
+    }
+
+    @SuppressLint("DefaultLocale")
+    private String getTimeString(long millis) {
+
+        int minutes = (int) ((millis % (1000 * 60 * 60)) / (1000 * 60));
+        int seconds = (int) (((millis % (1000 * 60 * 60)) % (1000 * 60)) / 1000);
+
+        return String.format("%02d", minutes) +
+                ":" +
+                String.format("%02d", seconds);
+    }
+
+    public void animIntro() {
+
+        casetteIsOn = 1;
+
+        btnDelete.setImageDrawable(drawableDelete);
+        ObjectAnimator trasladar2 = ObjectAnimator.ofFloat(btnPlay, "translationY", 500f, 0);
+        ObjectAnimator trasladar3 = ObjectAnimator.ofFloat(btnStop, "translationX", 800f, 0);
+        ObjectAnimator trasladar4 = ObjectAnimator.ofFloat(btnDelete, "translationX", -800f, 0);
+        ObjectAnimator trasladar5 = ObjectAnimator.ofFloat(seekBar, "translationX", -3000f, 0);
+        ObjectAnimator trasladar6 = ObjectAnimator.ofFloat(currentDur, "translationX", -800f, 0);
+        ObjectAnimator trasladar7 = ObjectAnimator.ofFloat(totalDur, "translationX", -1600f, 0);
+        ObjectAnimator trasladar8 = ObjectAnimator.ofFloat(iV, "translationX", -800f, 0);
+        ObjectAnimator trasladar10 = ObjectAnimator.ofFloat(songName, "translationX", 1800f, 0);
+        trasladar10.setDuration(1500);
+        trasladar2.setDuration(2000);
+        trasladar3.setDuration(2000);
+        trasladar4.setDuration(2000);
+        trasladar5.setDuration(1500);
+        trasladar6.setDuration(1500);
+        trasladar7.setDuration(1500);
+        trasladar8.setDuration(1500);
+        animadorBoton.playTogether(trasladar10, trasladar2, trasladar3, trasladar4, trasladar5, trasladar6, trasladar7, trasladar8);
+        animadorBoton.start();
+
+    }
+
+    public void animOutro(){
+        ObjectAnimator trasladar = ObjectAnimator.ofFloat(songName, "translationX", 0, -1800f);
+        ObjectAnimator trasladar2 = ObjectAnimator.ofFloat(btnPlay, "translationY", 0, 500f);
+        ObjectAnimator trasladar3 = ObjectAnimator.ofFloat(btnStop, "translationX", 0, -2000f);
+        ObjectAnimator trasladar4 = ObjectAnimator.ofFloat(btnDelete, "translationX", 0, -1999f);
+        ObjectAnimator trasladar5 = ObjectAnimator.ofFloat(seekBar, "translationX", 0, -3000f);
+        ObjectAnimator trasladar6 = ObjectAnimator.ofFloat(currentDur, "translationX", 0, -800f);
+        ObjectAnimator trasladar7 = ObjectAnimator.ofFloat(totalDur, "translationX", 0, -1600f);
+        ObjectAnimator trasladar8 = ObjectAnimator.ofFloat(iV, "translationX", 0, -800f);
+        trasladar.setDuration(1500);
+        trasladar2.setDuration(1500);
+        trasladar3.setDuration(1500);
+        trasladar4.setDuration(1500);
+        trasladar5.setDuration(1500);
+        trasladar6.setDuration(1500);
+        trasladar7.setDuration(1500);
+        trasladar8.setDuration(1500);
+        animadorBoton2.playTogether(trasladar, trasladar2, trasladar3, trasladar4, trasladar5, trasladar6, trasladar7, trasladar8);
+        animadorBoton2.start();
+        checkAnimation(animadorBoton2);
+        casetteIsOn = 0;
+    }
+
+    public void disappear() {
+        currentDur.setVisibility(View.INVISIBLE);
+        totalDur.setVisibility(View.INVISIBLE);
+        btnStop.setVisibility(View.INVISIBLE);
+        iV.setVisibility(View.INVISIBLE);
+        songName.setVisibility(View.INVISIBLE);
+        btnPlay.setVisibility(View.INVISIBLE);
+        btnDelete.setVisibility(View.INVISIBLE);
+        seekBar.setVisibility(View.INVISIBLE);
+    }
+
+    public void checkAnimation(AnimatorSet o) {
+
+        if (o.isRunning()) {
+            runSB = () -> checkAnimation(o);
+            handlerSB.postDelayed(runSB, 200);
+        } else {
+            disappear();
+            o.end();
+        }
+
     }
 
 }
