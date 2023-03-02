@@ -52,8 +52,6 @@ public class MainActivity extends AppCompatActivity {
     MediaPlayer mp2;
     Song newSong;
     Drawable teleGif;
-    int first3charCurr;
-    int first3charTot;
     Drawable drawablePlay;
     Drawable drawableDelete;
     Drawable drawablePause;
@@ -68,20 +66,18 @@ public class MainActivity extends AppCompatActivity {
     AnimatorSet animadorBoton2;
     AnimatorSet animadorBoton3;
     boolean isSeeking;
-    ImageApi iApi;
+    ImageApi  iApi = new ImageApi();
     int casetteIsOn = 0;
     ImageView fotoDisco;
+
+    public MainActivity() throws IOException {
+    }
+
     @SuppressLint({"UseCompatLoadingForDrawables", "SetTextI18n", "ResourceType"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        iApi.execute();
         super.onCreate(savedInstanceState);
-
-        try {
-            iApi = new ImageApi();
-            iApi.execute();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
         sqLiteManager = new SQLiteManager(this);
         lv = findViewById(R.id.songList);
@@ -131,7 +127,9 @@ public class MainActivity extends AppCompatActivity {
         lv.setOnItemClickListener((adapterView, view, i, l) -> {
             Drawable d;
             Bitmap bitUrl;
+
             bitUrl = iApi.getBitmap();
+
             d = new BitmapDrawable(bitUrl);
             fotoDisco.setImageDrawable(d);
 
@@ -434,8 +432,6 @@ public class MainActivity extends AppCompatActivity {
                 } catch (IOException e) {}
             }
 
-
-
             runSB = this::liveSeekBar;
         handlerSB.postDelayed(runSB, 1000);
     }
@@ -458,7 +454,7 @@ public class MainActivity extends AppCompatActivity {
         ObjectAnimator trasladar2 = ObjectAnimator.ofFloat(btnPlay, "translationY", 350f, 0);
         ObjectAnimator trasladar3 = ObjectAnimator.ofFloat(btnStop, "translationY", 350f, 0);
         ObjectAnimator trasladar4 = ObjectAnimator.ofFloat(btnDelete, "translationY", 350f, 0);
-        ObjectAnimator trasladar5 = ObjectAnimator.ofFloat(seekBar, "translationX", -3000f, 0);
+        ObjectAnimator trasladar5 = ObjectAnimator.ofFloat(seekBar, "translationX", -2000f, 0);
         ObjectAnimator trasladar6 = ObjectAnimator.ofFloat(currentDur, "translationX", -800f, 0);
         ObjectAnimator trasladar7 = ObjectAnimator.ofFloat(totalDur, "translationX", -1600f, 0);
         ObjectAnimator trasladar8 = ObjectAnimator.ofFloat(iV, "translationX", -1200f, 0);

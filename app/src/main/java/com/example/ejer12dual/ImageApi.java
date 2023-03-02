@@ -19,36 +19,24 @@ public class ImageApi extends AsyncTask {
     private InputStream is;
     private Bitmap bitUrl;
 
-    public ImageApi() throws IOException {
-
+    public ImageApi() {
     }
-
     public Bitmap getBitmap() {
         return bitUrl;
-    }
-
-    public InputStream getIS() {
-        return this.is;
     }
 
     @Override
     protected Object doInBackground(Object[] o) {
         try {
-
             URLConnection con = new URL(otrafuncion().toString()).openConnection();
             con.connect();
             otrafuncion();
-            System.out.println("JSKLDADJKLASKLAJSDKLSDJDAJSKLKADSKLAJDSK" + con.getURL());
             this.is = con.getInputStream();
             bitUrl = BitmapFactory.decodeStream(is);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return null;
-
-
-
-
     }
 
     public URL otrafuncion() throws IOException {
@@ -57,17 +45,9 @@ public class ImageApi extends AsyncTask {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setInstanceFollowRedirects(true);
         try {
-
             connection.setRequestMethod("GET");
-            connection.setConnectTimeout(60000);
-            connection.setReadTimeout(60000);
             connection.connect();
-
-            int code = connection.getResponseCode();
-            String message = connection.getResponseMessage();
-
             return connection.getURL();
-
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
@@ -75,7 +55,6 @@ public class ImageApi extends AsyncTask {
                 connection.disconnect();
             }
         }
-
         return null;
     }
 }

@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
 
     tools:context=".MainActivity"
-    android:background="@color/greyish"
+    android:background="@color/casiNegro"
     android:orientation="vertical">
 
 
@@ -50,7 +50,7 @@
     <ListView
         android:id="@+id/songList"
         android:layout_width="match_parent"
-        android:layout_height="190sp"
+        android:layout_height="230sp"
         android:background="@color/greyish"
         android:divider="@color/darkWhite"
         android:dividerHeight="2px">
@@ -111,6 +111,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:paddingBottom="65px"
+            android:textAlignment="center"
             android:layout_gravity="bottom|center"
             android:text="😎Sample text😎"
             android:textSize="12dp"
@@ -160,9 +161,9 @@
             android:layout_marginHorizontal="20dp"
             android:id="@+id/seekBar"
             android:layout_width="match_parent"
-            android:layout_height="10dp"
+            android:layout_height="5dp"
             android:layout_gravity="center_horizontal"
-            android:layout_weight="0.1"
+            android:layout_weight="0.04"
             android:progressBackgroundTint="@color/white"
             android:gravity="center">
 
@@ -227,7 +228,6 @@
 
 
         </LinearLayout>
-
 
     </LinearLayout>
 
