@@ -138,8 +138,8 @@
 
             <ImageButton
                 android:id="@+id/btnDelete"
-                android:layout_width="86dp"
-                android:layout_height="90dp"
+                android:layout_width="80dp"
+                android:layout_height="89dp"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
                 android:layout_weight="0"
@@ -151,8 +151,8 @@
 
             <ImageButton
                 android:id="@+id/btnPlay"
-                android:layout_width="86dp"
-                android:layout_height="90dp"
+                android:layout_width="80dp"
+                android:layout_height="89dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_weight="0"
                 android:adjustViewBounds="true"
@@ -164,8 +164,8 @@
 
             <ImageButton
                 android:id="@+id/btnStop"
-                android:layout_width="86dp"
-                android:layout_height="90dp"
+                android:layout_width="80dp"
+                android:layout_height="89dp"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
                 android:layout_weight="0"
@@ -173,6 +173,20 @@
                 android:backgroundTint="#006699FF"
                 android:onClick="stopSong"
                 app:srcCompat="@drawable/stopnotpressed" />
+
+            <ImageButton
+                android:id="@+id/btnLoop"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_weight="0"
+                android:adjustViewBounds="true"
+                android:backgroundTint="#006699FF"
+                android:gravity="bottom"
+                android:onClick="stopSong"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/offloop" />
+
+
         </LinearLayout>
 
 
