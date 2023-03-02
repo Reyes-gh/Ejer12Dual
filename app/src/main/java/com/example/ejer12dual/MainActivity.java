@@ -7,8 +7,12 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
+import android.media.Image;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,6 +37,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -62,11 +68,20 @@ public class MainActivity extends AppCompatActivity {
     AnimatorSet animadorBoton2;
     AnimatorSet animadorBoton3;
     boolean isSeeking;
+    ImageApi iApi;
     int casetteIsOn = 0;
-    @SuppressLint({"UseCompatLoadingForDrawables", "SetTextI18n"})
+    ImageView fotoDisco;
+    @SuppressLint({"UseCompatLoadingForDrawables", "SetTextI18n", "ResourceType"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        try {
+            iApi = new ImageApi();
+            iApi.execute();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         sqLiteManager = new SQLiteManager(this);
         lv = findViewById(R.id.songList);
@@ -81,9 +96,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         iV = findViewById(R.id.iV);
 
-        teleGif = getDrawable(R.drawable.quieto);
-        @SuppressLint("UseCompatLoadingForDrawables") Drawable teleRun = getDrawable(R.drawable.corriendo);
+        //teleGif = getDrawable(R.drawable.quieto);
+        teleGif = getDrawable(R.drawable.casetteoff);
 
+        //@SuppressLint("UseCompatLoadingForDrawables") Drawable teleRun = getDrawable(R.drawable.corriendo);
+        @SuppressLint("UseCompatLoadingForDrawables") Drawable teleRun = getDrawable(R.drawable.casetteon);
         teleGif.setFilterBitmap(false);
         Glide.with(this).load(teleGif).into(iV);
 
@@ -91,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
             updateList();
         } catch (NoSuchFieldException | IllegalAccessException e) {}
 
+        fotoDisco = findViewById(R.id.fotoDisco);
         currentDur = findViewById(R.id.currentDur);
         seekBar = findViewById(R.id.seekBar);
         totalDur = findViewById(R.id.totalDur);
@@ -111,6 +129,12 @@ public class MainActivity extends AppCompatActivity {
         btnLoop.setOnClickListener(v -> loopControl(0));
 
         lv.setOnItemClickListener((adapterView, view, i, l) -> {
+            Drawable d;
+            Bitmap bitUrl;
+            bitUrl = iApi.getBitmap();
+            d = new BitmapDrawable(bitUrl);
+            fotoDisco.setImageDrawable(d);
+
             if ((casetteIsOn==0)) {
                 animIntro();
             }
@@ -338,6 +362,7 @@ public class MainActivity extends AppCompatActivity {
         currentDur.setVisibility(View.VISIBLE);
         totalDur.setVisibility(View.VISIBLE);
         btnLoop.setVisibility(View.VISIBLE);
+        fotoDisco.setVisibility(View.VISIBLE);
 
         try {
 
@@ -433,13 +458,15 @@ public class MainActivity extends AppCompatActivity {
         ObjectAnimator trasladar2 = ObjectAnimator.ofFloat(btnPlay, "translationY", 350f, 0);
         ObjectAnimator trasladar3 = ObjectAnimator.ofFloat(btnStop, "translationY", 350f, 0);
         ObjectAnimator trasladar4 = ObjectAnimator.ofFloat(btnDelete, "translationY", 350f, 0);
-        ObjectAnimator trasladar11 = ObjectAnimator.ofFloat(btnLoop, "translationY", 350f, 0);
         ObjectAnimator trasladar5 = ObjectAnimator.ofFloat(seekBar, "translationX", -3000f, 0);
         ObjectAnimator trasladar6 = ObjectAnimator.ofFloat(currentDur, "translationX", -800f, 0);
         ObjectAnimator trasladar7 = ObjectAnimator.ofFloat(totalDur, "translationX", -1600f, 0);
-        ObjectAnimator trasladar8 = ObjectAnimator.ofFloat(iV, "translationX", -800f, 0);
+        ObjectAnimator trasladar8 = ObjectAnimator.ofFloat(iV, "translationX", -1200f, 0);
         ObjectAnimator trasladar10 = ObjectAnimator.ofFloat(songName, "translationX", -1800f, 0);
+        ObjectAnimator trasladar11 = ObjectAnimator.ofFloat(btnLoop, "translationY", 350f, 0);
+        ObjectAnimator trasladar12 = ObjectAnimator.ofFloat(fotoDisco, "translationX", -1200, 0);
 
+        trasladar12.setDuration(1500);
         trasladar11.setDuration(2200);
         trasladar10.setDuration(1500);
         trasladar2.setDuration(1400);
@@ -449,7 +476,8 @@ public class MainActivity extends AppCompatActivity {
         trasladar6.setDuration(1500);
         trasladar7.setDuration(1500);
         trasladar8.setDuration(1500);
-        animadorBoton.playTogether(trasladar11, trasladar10, trasladar2, trasladar3, trasladar4, trasladar5, trasladar6, trasladar7, trasladar8);
+
+        animadorBoton.playTogether(trasladar12, trasladar11, trasladar10, trasladar2, trasladar3, trasladar4, trasladar5, trasladar6, trasladar7, trasladar8);
         animadorBoton.start();
 
     }
@@ -463,8 +491,10 @@ public class MainActivity extends AppCompatActivity {
         ObjectAnimator trasladar5 = ObjectAnimator.ofFloat(seekBar, "translationX", 0, -3000f);
         ObjectAnimator trasladar6 = ObjectAnimator.ofFloat(currentDur, "translationX", 0, -800f);
         ObjectAnimator trasladar7 = ObjectAnimator.ofFloat(totalDur, "translationX", 0, -1600f);
-        ObjectAnimator trasladar8 = ObjectAnimator.ofFloat(iV, "translationX", 0, -800f);
+        ObjectAnimator trasladar8 = ObjectAnimator.ofFloat(iV, "translationX", 0, -1200f);
+        ObjectAnimator trasladar10 = ObjectAnimator.ofFloat(fotoDisco, "translationX", 0, -1200);
 
+        trasladar10.setDuration(1500);
         trasladar9.setDuration(2700);
         trasladar.setDuration(1500);
         trasladar2.setDuration(1900);
@@ -474,7 +504,7 @@ public class MainActivity extends AppCompatActivity {
         trasladar6.setDuration(1500);
         trasladar7.setDuration(1500);
         trasladar8.setDuration(1500);
-        animadorBoton2.playTogether(trasladar, trasladar2, trasladar3, trasladar4, trasladar5, trasladar6, trasladar7, trasladar8, trasladar9);
+        animadorBoton2.playTogether(trasladar10, trasladar, trasladar2, trasladar3, trasladar4, trasladar5, trasladar6, trasladar7, trasladar8, trasladar9);
         animadorBoton2.start();
         checkAnimation(animadorBoton2);
         casetteIsOn = 0;
@@ -490,6 +520,8 @@ public class MainActivity extends AppCompatActivity {
         btnPlay.setVisibility(View.INVISIBLE);
         btnDelete.setVisibility(View.INVISIBLE);
         seekBar.setVisibility(View.INVISIBLE);
+        fotoDisco.setVisibility(View.INVISIBLE);
+
     }
 
     public void checkAnimation(AnimatorSet o) {

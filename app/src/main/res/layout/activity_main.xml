@@ -65,33 +65,66 @@
         android:textColor="@color/white"
         android:onClick="borrarSongs"
         android:text="Borrar Todo"
-        android:textSize="20sp">
+        android:textSize="18sp">
     </Button>
 
-    <ImageView
-        android:id="@+id/iV"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        app:srcCompat="@drawable/stand_scaled_14x_minified"
-        android:layout_gravity="center"/>
+        android:layout_height="wrap_content"
+        android:layout_weight="0.01">
+
+        <ImageView
+            android:id="@+id/iV"
+            android:layout_width="fill_parent"
+            android:layout_height="840px"
+            android:scaleType="fitCenter"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/casetteoff" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="525px"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:layout_gravity="center"
+            android:gravity="center"
+            app:srcCompat="@drawable/casetteoff" >
+
+            <ImageView
+                android:id="@+id/fotoDisco"
+                android:layout_width="525px"
+                android:layout_height="fill_parent"
+                android:scaleType="fitCenter"
+                android:gravity="center_horizontal"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/quieto" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/songName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingBottom="65px"
+            android:layout_gravity="bottom|center"
+            android:text="😎Sample text😎"
+            android:textSize="12dp"
+            android:textColor="#FFFFFF"/>
+
+    </FrameLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_weight="1"
         android:layout_gravity="center"
         android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/songName"
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:layout_weight="0.5"
-            android:orientation="vertical"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center"
-            android:text="😎Sample text😎"
-            android:textSize="20dp"
-            android:textColor="#FFFFFF"/>
 
         <LinearLayout
             android:paddingHorizontal="20dp"
@@ -127,9 +160,9 @@
             android:layout_marginHorizontal="20dp"
             android:id="@+id/seekBar"
             android:layout_width="match_parent"
-            android:layout_height="5dp"
+            android:layout_height="10dp"
             android:layout_gravity="center_horizontal"
-            android:layout_weight="0.2"
+            android:layout_weight="0.1"
             android:progressBackgroundTint="@color/white"
             android:gravity="center">
 
@@ -137,15 +170,15 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="90dp"
+            android:layout_height="86dp"
             android:layout_gravity="center_horizontal"
             android:gravity="center"
             android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/btnDelete"
-                android:layout_width="80dp"
-                android:layout_height="89dp"
+                android:layout_width="77dp"
+                android:layout_height="86dp"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
                 android:layout_weight="0"
@@ -157,8 +190,8 @@
 
             <ImageButton
                 android:id="@+id/btnPlay"
-                android:layout_width="80dp"
-                android:layout_height="89dp"
+                android:layout_width="77dp"
+                android:layout_height="86dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_weight="0"
                 android:adjustViewBounds="true"
@@ -170,8 +203,8 @@
 
             <ImageButton
                 android:id="@+id/btnStop"
-                android:layout_width="80dp"
-                android:layout_height="89dp"
+                android:layout_width="77dp"
+                android:layout_height="86dp"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
                 android:layout_weight="0"
@@ -182,8 +215,8 @@
 
             <ImageButton
                 android:id="@+id/btnLoop"
-                android:layout_width="80dp"
-                android:layout_height="89dp"
+                android:layout_width="77dp"
+                android:layout_height="86dp"
                 android:layout_weight="0"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
