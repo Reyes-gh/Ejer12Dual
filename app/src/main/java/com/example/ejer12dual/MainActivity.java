@@ -147,7 +147,8 @@ public class MainActivity extends AppCompatActivity {
         btnDelete.setOnClickListener(v -> {
 
             btnDelete.setImageDrawable(getDrawable(R.drawable.trashpressed));
-            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this, AlertDialog.THEME_DEVICE_DEFAULT_DARK);
+
 
             final AlertDialog dialog = builder.setNegativeButton("OK", (dialog1, id) -> {
                 try {
@@ -156,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
                     throw new RuntimeException(e);
                 }
                 dialog1.cancel();
-            }).setPositiveButton("CANCEL", (dialog12, id) ->  {
+            }).setPositiveButton("CANCELAR", (dialog12, id) ->  {
                 dialog12.cancel();
                 btnDelete.setImageDrawable(getDrawable(R.drawable.trashnotpressed));
             }).create();
@@ -284,7 +285,7 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     public void borrarSongs(View view) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this, AlertDialog.THEME_DEVICE_DEFAULT_DARK);
 
         final AlertDialog dialog = builder.setNegativeButton("OK", (dialog1, id) -> {
             try {
@@ -295,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
                 throw new RuntimeException(e);
             }
             dialog1.cancel();
-        }).setPositiveButton("CANCEL", (dialog12, id) -> dialog12.cancel()).create();
+        }).setPositiveButton("CANCELAR", (dialog12, id) -> dialog12.cancel()).create();
 
         TextView myMsg = new TextView(MainActivity.this);
         myMsg.setText("Woah woah espera ¿en serio quieres borrarlo TODO?");
@@ -396,6 +397,10 @@ public class MainActivity extends AppCompatActivity {
 
          seekBar.setProgress(currPos);
 
+        if (!(mp.isPlaying())) {
+            currentDur.setText(totalDur.getText());
+        }
+
             if ((currentDur.getText().equals(totalDur.getText()))&&((!mp.isLooping())||(!mp.isPlaying()))) {
                 try{
                     stopSong(newSong);
@@ -403,6 +408,8 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 } catch (IOException e) {}
             }
+
+
 
             runSB = this::liveSeekBar;
         handlerSB.postDelayed(runSB, 1000);
@@ -423,21 +430,21 @@ public class MainActivity extends AppCompatActivity {
         casetteIsOn = 1;
 
         btnDelete.setImageDrawable(drawableDelete);
-        ObjectAnimator trasladar2 = ObjectAnimator.ofFloat(btnPlay, "translationY", 500f, 0);
-        ObjectAnimator trasladar3 = ObjectAnimator.ofFloat(btnStop, "translationY", 500f, 0);
-        ObjectAnimator trasladar4 = ObjectAnimator.ofFloat(btnDelete, "translationY", 500f, 0);
-        ObjectAnimator trasladar11 = ObjectAnimator.ofFloat(btnLoop, "translationY", 500f, 0);
+        ObjectAnimator trasladar2 = ObjectAnimator.ofFloat(btnPlay, "translationY", 350f, 0);
+        ObjectAnimator trasladar3 = ObjectAnimator.ofFloat(btnStop, "translationY", 350f, 0);
+        ObjectAnimator trasladar4 = ObjectAnimator.ofFloat(btnDelete, "translationY", 350f, 0);
+        ObjectAnimator trasladar11 = ObjectAnimator.ofFloat(btnLoop, "translationY", 350f, 0);
         ObjectAnimator trasladar5 = ObjectAnimator.ofFloat(seekBar, "translationX", -3000f, 0);
         ObjectAnimator trasladar6 = ObjectAnimator.ofFloat(currentDur, "translationX", -800f, 0);
         ObjectAnimator trasladar7 = ObjectAnimator.ofFloat(totalDur, "translationX", -1600f, 0);
         ObjectAnimator trasladar8 = ObjectAnimator.ofFloat(iV, "translationX", -800f, 0);
-        ObjectAnimator trasladar10 = ObjectAnimator.ofFloat(songName, "translationX", 1800f, 0);
+        ObjectAnimator trasladar10 = ObjectAnimator.ofFloat(songName, "translationX", -1800f, 0);
 
-        trasladar11.setDuration(3000);
+        trasladar11.setDuration(2200);
         trasladar10.setDuration(1500);
-        trasladar2.setDuration(2200);
-        trasladar3.setDuration(2600);
-        trasladar4.setDuration(1800);
+        trasladar2.setDuration(1400);
+        trasladar3.setDuration(1800);
+        trasladar4.setDuration(1000);
         trasladar5.setDuration(1500);
         trasladar6.setDuration(1500);
         trasladar7.setDuration(1500);

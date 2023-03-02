@@ -41,6 +41,7 @@
             android:text="@string/mas"
             android:backgroundTint="@color/black"
             android:textSize="30sp"
+            android:textColor="@color/white"
             android:layout_gravity="end"
             android:onClick="newSong">
         </Button>
@@ -50,9 +51,9 @@
         android:id="@+id/songList"
         android:layout_width="match_parent"
         android:layout_height="190sp"
-        android:background="#FFFFFF"
-        android:backgroundTint="#FFFFFF"
-        android:foregroundTint="#FFFFFF">
+        android:background="@color/greyish"
+        android:divider="@color/darkWhite"
+        android:dividerHeight="2px">
 
     </ListView>
 
@@ -61,6 +62,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:backgroundTint="@color/black"
+        android:textColor="@color/white"
         android:onClick="borrarSongs"
         android:text="Borrar Todo"
         android:textSize="20sp">
@@ -128,6 +130,7 @@
             android:layout_height="5dp"
             android:layout_gravity="center_horizontal"
             android:layout_weight="0.2"
+            android:progressBackgroundTint="@color/white"
             android:gravity="center">
 
         </SeekBar>
