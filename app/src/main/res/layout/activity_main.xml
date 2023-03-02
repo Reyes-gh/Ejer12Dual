@@ -21,7 +21,9 @@
         <ImageView
             android:layout_width="50dp"
             android:layout_height="50dp"
-            app:srcCompat="@drawable/quieto"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            app:srcCompat="@drawable/lowreslogo"
             android:layout_gravity="start"/>
 
         <TextView
