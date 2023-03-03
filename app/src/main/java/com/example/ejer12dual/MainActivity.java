@@ -420,11 +420,13 @@ public class MainActivity extends AppCompatActivity {
 
          seekBar.setProgress(currPos);
 
-        if (!(mp.isPlaying())) {
-            currentDur.setText(totalDur.getText());
-        }
+        // DEBUGGER songName.setText("1 = " + !mp.isPlaying() + " 2= " + (btnPlay.getDrawable().equals(drawablePause)));
 
-            if ((currentDur.getText().equals(totalDur.getText()))&&((!mp.isLooping())||(!mp.isPlaying()))) {
+        /*if ((!mp.isPlaying())&&(btnPlay.getDrawable().equals(drawablePause))) {
+            currentDur.setText(totalDur.getText());
+        }*/
+
+            if ((!mp.isPlaying()&&(btnPlay.getDrawable().equals(drawablePause)))&&((!mp.isLooping()))) {
                 try{
                     stopSong(newSong);
                     isSeeking=false;
