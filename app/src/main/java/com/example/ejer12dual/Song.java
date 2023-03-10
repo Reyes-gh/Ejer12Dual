@@ -3,6 +3,11 @@ package com.example.ejer12dual;
 import java.sql.Blob;
 import java.util.Arrays;
 
+/**
+ *
+ * Clase Song donde almacenaremos los datos de la canción que se vaya a almacenar o reproducir
+ * @author AlexRG
+ */
 public class Song {
 
     private int id;

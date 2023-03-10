@@ -34,10 +34,13 @@ public class SQLiteManager extends SQLiteOpenHelper {
         if (sqLiteManager==null) {
             sqLiteManager = new SQLiteManager(context);
         }
-
         return sqLiteManager;
     }
 
+    /**
+     * Al iniciar la aplicación se crea la base de datos con las características de las canciones.
+     * @param db The database.
+     */
     @Override
     public void onCreate(SQLiteDatabase db) {
 
@@ -61,16 +64,13 @@ public class SQLiteManager extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        /*switch (oldVersion) {
-
-            case 1:
-                db.execSQL("ALTER TABLE" + TABLE_NAME + " ADD COLUMN" + NEW_COLUMN + " TEXT");
-
-            case 2:
-                db.execSQL("ALTER TABLE" + TABLE_NAME + " ADD COLUMN" + NEW_COLUMN + " TEXT");
-        }*/
     }
 
+    /**
+     * El método addSong recibe por parámetro una canción e introduce los datos en la base
+     * de datos.
+     * @param song
+     */
     public void addSong(Song song) {
 
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
@@ -84,18 +84,31 @@ public class SQLiteManager extends SQLiteOpenHelper {
 
     }
 
+    /**
+     * borrarSongs limpia toda la base de datos
+     */
     public void borrarSongs () {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         sqLiteDatabase.execSQL("DELETE FROM " + TABLE_NAME);
 
     }
 
+    /**
+     * getSongs devuelve todas las canciones en un array creando canciones nuevas con datos
+     * recogidos por un cursor.
+     * @return
+     * @throws IllegalAccessException
+     * @throws NoSuchFieldException
+     */
     public ArrayList<Song> getSongs() throws IllegalAccessException, NoSuchFieldException {
-
         ArrayList<Song> arraySongs = new ArrayList<>();
-
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
 
+        /**
+         * Es importante que mediante Field cambiemos una propiedad del cursor que va a recoger
+         * los Blob de la base de datos, pues originalmente el cursor es demasiado pequeño y no puede
+         * leer más de 1MB, incluso siendo lo máximo de un Blob 2GB
+         */
         Field field = CursorWindow.class.getDeclaredField("sCursorWindowSize");
         field.setAccessible(true);
         field.set(null, 100 * 1024 * 1024);
@@ -115,7 +128,6 @@ public class SQLiteManager extends SQLiteOpenHelper {
             }
 
         }
-
         return arraySongs;
     }
 
@@ -130,6 +142,10 @@ public class SQLiteManager extends SQLiteOpenHelper {
         sqLiteDatabase.update(TABLE_NAME, cv, ID_FIELD + " =? ", new String[]{String.valueOf(s.getId())});
     }
 
+    /**
+     * Borrar canción busca una canción por ID y la borra de la base de datos SQLite.
+     * @param s
+     */
     public void borrarCancion(Song s) {
 
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();

@@ -76,7 +76,7 @@
         <ImageView
             android:id="@+id/iV"
             android:layout_width="fill_parent"
-            android:layout_height="840px"
+            android:layout_height="750px"
             android:scaleType="fitCenter"
             android:layout_weight="1"
             android:adjustViewBounds="true"
